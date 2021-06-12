@@ -3,13 +3,58 @@
 
 
 <h1>
-    A Study In Recusive Cartography
+    Recusive Cartography
 </h1>
+<p style="font-style: italic;">
+    A brief introduction
+</p>
 
-<button @onclick="@(()=>Navigate(1))" class="btn-info btn-lg">Level One</button>
-<button @onclick="@(()=>Navigate(2))" class="btn-info btn-lg">Level Two</button>
-<button @onclick="@(()=>Navigate(3))" class="btn-info btn-lg">Level Three</button>
-<button @onclick="@(()=>Navigate(4))" class="btn-info btn-lg">Level Four</button>
+<style>
+	button {
+        width: 100%;
+        display: block;
+        margin-bottom: 10px;
+        text-align: left;
+    }
+	button h6 {
+        font-style: italic;
+    }
+</style>
+
+<button @onclick="@(()=>Navigate(1))" class="btn-primary btn-lg">
+    <h5>Level One</h5>
+    <h6>A bridge (not too far)</h6>
+</button>
+<button @onclick="@(() => Navigate(2))" class="btn-primary  btn-lg">
+    <h5>Level Two</h5>
+    <h6>
+        I know a shortcut.
+    </h6>
+</button>
+
+<button @onclick="@(() => Navigate(3))" class="btn-primary  btn-lg">
+    <h5>Level Three</h5>
+    <h6>
+        With apologies to one's sanity
+    </h6>
+</button>
+
+<button @onclick="@(() => Navigate(4))" class="btn-primary  btn-lg">
+    <h5>Level Four</h5>
+    <h6>
+        Ohana means nobody gets left behind
+    </h6>
+</button>
+
+<button @onclick="@(() => Navigate(5))" class="btn-primary  btn-lg">
+    <h5>Level Five</h5>
+    <h6>
+        A bridge, unquestionably too far.
+    </h6>
+</button>
+
+
+<button @onclick="@(()=>Navigate(6))" class="btn-primary  btn-lg">Level Six</button>
 <button @onclick="@(()=>ShowThankYou())" class="btn-info btn-lg">Thank You & Attributions</button>
 
 

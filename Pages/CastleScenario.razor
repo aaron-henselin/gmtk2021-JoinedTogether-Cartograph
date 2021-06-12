@@ -45,10 +45,15 @@
         if (WinCondition == null)
             WinCondition = scenario =>
             {
-                var playerPositions = CurrentFloor.GameObjects.Where(x => x.IsPlayer).Select(x => x.Position);
+                var playerPositions = CurrentFloor.GameObjects.Where(x => x.IsPlayer).Select(x => x.Position).ToList();
                 var exitPositions = CurrentFloor.GameObjects.Where(x => x.IsExit).Select(x => x.Position);
-                var winConditions = playerPositions.Intersect(exitPositions);
-                return winConditions.Any();
+                foreach (var exitPosition in exitPositions)
+                {
+                    var atExit = playerPositions.Contains(exitPosition);
+					if (!atExit)
+                        return false;
+                }
+                return true;
             };
 
 		StartGame();

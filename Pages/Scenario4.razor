@@ -2,16 +2,22 @@
 @using JoinedTogetherGmtk2021.Game
 
 <h3>
-    Level Three
+    Level Four
 </h3>
 <h6>
-    A bridge, definitely too far.
+    Ohana means nobody gets left behind
 </h6>
 
-<CastleScenario FloorFactory="@FloorTemplate" EnableBackpack="true"/>
+<CastleScenario FloorFactory="@FloorTemplate" WinConditionReached="@Next"/>
 
+@inject NavigationManager NavigationManager
 @code
 {
+    private void Next()
+    {
+        NavigationManager.NavigateTo("5");
+    }
+
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
@@ -26,11 +32,20 @@
         floor.Layout[new FloorCoord {X = 5, Y = 2}] = new Room(RoomTypes.PATH_E_W);
         floor.GameObjects.Add(new GameObject{Position = new FloorCoord{X=5,Y=2},IsExit = true});
 
+        floor.Layout[new FloorCoord {X = 0, Y = 3}] = new Room(RoomTypes.PATH_E_W);
+        floor.GameObjects.Add(new GameObject{Position = new FloorCoord{X=0,Y=3},IsPlayer = true});
+
+        floor.Layout[new FloorCoord {X = 2, Y = 3}] = new Room(RoomTypes.PATH_E_W);
+        floor.GameObjects.Add(new GameObject{Position = new FloorCoord{X=2,Y=3},IsExit = true});
+
+
+
         floor.Layout[new FloorCoord {X = 0, Y = 5}] = new Room(RoomTypes.PATHN__W);
         floor.Layout[new FloorCoord {X = 1, Y = 5}] = new Room(RoomTypes.PATH__SW);
         floor.Layout[new FloorCoord {X = 2, Y = 5}] = new Room(RoomTypes.PATHN___);
-        floor.Layout[new FloorCoord {X = 4, Y = 5}] = new Room(RoomTypes.PATH_E_W);
-        
+        floor.Layout[new FloorCoord {X = 3, Y = 5}] = new Room(RoomTypes.PATH_E_W);
+        floor.Layout[new FloorCoord {X = 4, Y = 5}] = new Room(RoomTypes.PATH_ES_);
+        floor.Layout[new FloorCoord {X = 5, Y = 5}] = new Room(RoomTypes.PATHNE__);
         return floor;
     }
 
