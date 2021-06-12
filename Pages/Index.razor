@@ -46,6 +46,10 @@
     </h6>
 </button>
 
+<button @onclick="@(() => Navigate("interlude"))" class="btn-secondary  btn-lg">
+    <h5>Interlude</h5>
+</button>
+
 <button @onclick="@(() => Navigate(5))" class="btn-primary  btn-lg">
     <h5>Level Five</h5>
     <h6>
@@ -53,66 +57,17 @@
     </h6>
 </button>
 
-
-<button @onclick="@(()=>Navigate(6))" class="btn-primary  btn-lg">Level Six</button>
-<button @onclick="@(()=>ShowThankYou())" class="btn-info btn-lg">Thank You & Attributions</button>
-
-
-
-
-@if (_showThankYou)
-{
-    <div class="thankyou">
-    <h6>With apologies to:</h6>
-
-    <h6>Art</h6>
-    <table class="table">
-        <thead>
-        <tr>
-            <th scope="col">Author</th>
-            <th scope="col">Content</th>
-        </tr>
-        </thead>
-        <tr>
-            <td>SecretHideout</td>
-            <td>RogueDungeon</td>
-        </tr>
-        <tr>
-            <td>kenney</td>
-            <td>cartographypack, tooncharacters</td>
-        </tr>
-    </table>
+<button @onclick="@(()=>Navigate(6))" class="btn-primary  btn-lg">
+    <h5>Level Six</h5>
+    <h6>
+        The Great Escape
+    </h6	
+</button>
+<button @onclick="@(()=>Navigate("ThankYou"))" class="btn-info btn-lg">Thank You & Attributions</button>
 
 
-    <h6>Foley</h6>
-    <table  class="table">
-        <tr>
-            <th scope="col">Author</th>
-            <th scope="col">Content</th>
-        </tr>
-        <tr>
-            <td>steaq</td>
-            <td>387232__steaq__badge-coin-win</td>
-        </tr>
-        <tr>
-            <td>mativve</td>
-            <td>391539__mativve__electro-win-sound</td>
-        </tr>
-        <tr>
-            <td>lextrack</td>
-            <td>265306__lextrack__climbing-the-ladder</td>
-        </tr>
-        <tr>
-            <td>zovipoland</td>
-            <td>517724__zovipoland__clothes-drop-3</td>
-        </tr>
-        <tr>
-            <td>clearwavsound</td>
-            <td>540338__clearwavsound__bricks-sliding</td>
-        </tr>
-    </table>
-    </div>
-}
+
+
 
 
 @inject NavigationManager NavigationManager
@@ -132,7 +87,11 @@
         NavigationManager.NavigateTo(num.ToString());
     }
 
-	
+    private void Navigate(string name)
+    {
+        NavigationManager.NavigateTo(name);
+    }
+
     private void ShowThankYou()
     {
         _showThankYou = true;

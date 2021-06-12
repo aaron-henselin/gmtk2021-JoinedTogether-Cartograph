@@ -1,0 +1,44 @@
+﻿@page "/Interlude"
+
+<h3>Interlude</h3>
+<div class="container">
+    <p>"It's impossible," the cartopher bemoaned. The hubris that gave birth to the notion that a tower of infinite depth could be demarcated had finally subsided.</p>
+    @if (_storyBeat > 0)
+    {
+        <p>The newfound was concern was escaping. Scrolls and sketches had long since been burned for kindling, and rations were quickly running down to "boiled shoe"</p>
+    }
+    @if (_storyBeat > 1)
+    {
+        <p>"Perhaps by focusing on remembering just one small part of this world, I can piece together a path back to the surface"</p>
+    }
+    @if (_storyBeat > 2)
+    {
+        <p>
+            You have gained <b>memory!</b>
+            <img src="inventory.PNG" style="display: block; margin: auto; margin-top: 10px;"/>
+        </p>
+        <p style="font-style: italic">
+            Use this to remember stuff.
+        </p>
+    }
+    <div>
+        <button class="btn btn-primary float-right;" @onclick="Next">Next</button>
+    </div>
+</div>
+
+@inject NavigationManager NavigationManager
+@code {
+    int _storyBeat = 0;
+
+    public void Next()
+    {
+        _storyBeat++;
+
+        if (_storyBeat == 4)
+        {
+            NavigationManager.NavigateTo("5");
+        }
+    }
+}
+
+    

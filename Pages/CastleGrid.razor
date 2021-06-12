@@ -117,11 +117,9 @@
     @if (Floor != null)
     {
 		
-        string floorName = "Ground Floor";
-        if (Floor.Depth > 1)
-            floorName = "Basement " + (Floor.Depth - 1);
         
-        <h6>@floorName</h6>
+        
+        <h6>@Floor.Name</h6>
 
         <table style="margin-top: 10px;">
 			
@@ -188,8 +186,8 @@
                                         <li class="favorites-list-item original-contents">
 											
 											@{
-												var floorStyle = (Floor.Depth-1) % 5;
-											    var arr = new[] {"Square", "Diamond", "Circle", "Cross", "Shield"};
+												var floorStyle = Math.Abs(Floor.Depth-1) % 3;
+											    var arr = new[] {"Square", "Diamond", "Circle", "Cross"};
 											}
 
                                             <img src="@($"kenney/element{arr[floorStyle]}.png")" width="96" height="96" class="empty-tile"/>

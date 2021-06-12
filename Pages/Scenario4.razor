@@ -2,11 +2,9 @@
 @using JoinedTogetherGmtk2021.Game
 
 <h3>
-    Level Four
+    4. Ohana means nobody gets left behind
 </h3>
-<h6>
-    Ohana means nobody gets left behind
-</h6>
+
 
 <CastleScenario FloorFactory="@FloorTemplate" WinConditionReached="@Next"/>
 
@@ -15,7 +13,7 @@
 {
     private void Next()
     {
-        NavigationManager.NavigateTo("5");
+        NavigationManager.NavigateTo("Interlude");
     }
 
     protected override void OnParametersSet()

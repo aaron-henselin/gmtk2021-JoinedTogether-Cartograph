@@ -36,12 +36,22 @@ namespace JoinedTogetherGmtk2021.Game
     {
         public int Depth
         {
+            get;
+            set;
+        }
+
+        public string Name
+        {
             get
             {
-                if (ParentFloor == null)
-                    return 1;
+                string floorName = "Ground Floor";
+                if (Depth > 1)
+                    floorName = "Basement " + (Depth - 1);
 
-                return ParentFloor.Depth + 1;
+                if (Depth < 1)
+                    floorName = "Floor " + (Depth + 1);
+
+                return floorName;
             }
         }
 

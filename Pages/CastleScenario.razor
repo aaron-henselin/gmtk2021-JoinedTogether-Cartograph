@@ -33,7 +33,7 @@
     [Parameter]
     public bool EnableBackpack { get; set; }
 
-    private Floor CurrentFloor { get; set; }
+    public Floor CurrentFloor { get; set; }
 
     private bool TestWinCondition()
     {
@@ -64,6 +64,7 @@
     private void StartGame()
     {
         var floorTemplate = FloorFactory();
+        floorTemplate.Depth = 1;
         this.CurrentFloor = floorTemplate;
     }
 
@@ -98,7 +99,10 @@
         if (CurrentFloor.ParentFloor != null)
             upperFloor = CurrentFloor.ParentFloor;
         else
+        {
             upperFloor = FloorFactory();
+            upperFloor.Depth = CurrentFloor.Depth - 1;
+        }
 
         foreach (var ladderPosition in ladderPositions)
         {
@@ -135,6 +139,7 @@
             .Select(x => x.Key);
 
         var lowerFloor = FloorFactory();
+        lowerFloor.Depth = CurrentFloor.Depth + 1;
 		foreach (var ladderPosition in ladderPositions)
             lowerFloor.Layout[ladderPosition] = new Room(RoomTypes.PATH__S_);
 
