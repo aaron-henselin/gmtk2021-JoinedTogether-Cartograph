@@ -1,62 +1,87 @@
 ﻿@page "/ThankYou"
 
-<h1>Thank you for playing.</h1>
 
-<h2>Attributions</h2>
-<p style="font-style: italic">With apologies to:</p>
+
+
 <div class="container">
-    
 
-    <h6>Art</h6>
-    <table class="table-hover table-striped">
-        <thead>
+    <h1>Thank you.</h1>
+    <p style="text-align: left;">
+        Joining together with this community remains one of the highlights of my year.
+        Hope you managed to cram in all of your most wild and crazy out-of-scope ideas.
+        <br/>
+        <br/>♥ Aaron
+		<br/>
+        <small>Find me on Discord @@s3raphym for your next jam.</small>
+    </p>
+	
+    <div style="margin: 20px;">
+        <button class="btn btn-primary" @onclick="Back">Back to menu</button>
+    </div>
+    
+    <p style="font-style: italic;text-decoration: underline;">With attribution &amp; apology to:</p>
+	
+    <div style="text-align: left;">
+    <h5>Artists</h5>
+    <table class="table table-hover table-striped">
+        <thead class="thead-light">
         <tr>
             <th scope="col">Author</th>
             <th scope="col">Content</th>
         </tr>
         </thead>
         <tr>
-            <td>SecretHideout</td>
+            <td>Itch.io / SecretHideout</td>
             <td>RogueDungeon</td>
         </tr>
         <tr>
-            <td>kenney</td>
+            <td>Kenney</td>
             <td>cartographypack, tooncharacters</td>
         </tr>
     </table>
 
 
-    <h6>Foley</h6>
-    <table  class="table">
-        <tr>
-            <th scope="col">Author</th>
-            <th scope="col">Content</th>
-        </tr>
-        <tr>
-            <td>steaq</td>
-            <td>387232__steaq__badge-coin-win</td>
-        </tr>
-        <tr>
-            <td>mativve</td>
-            <td>391539__mativve__electro-win-sound</td>
-        </tr>
-        <tr>
-            <td>lextrack</td>
-            <td>265306__lextrack__climbing-the-ladder</td>
-        </tr>
-        <tr>
-            <td>zovipoland</td>
-            <td>517724__zovipoland__clothes-drop-3</td>
-        </tr>
-        <tr>
-            <td>clearwavsound</td>
-            <td>540338__clearwavsound__bricks-sliding</td>
-        </tr>
-    </table>
+    <h5>Foley</h5>
+        <table class="table table-hover table-striped">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">Freesound Author</th>
+                    <th scope="col">Content</th>
+                </tr>
+            </thead>
+
+
+            <tr>
+                <td>steaq</td>
+                <td>387232__steaq__badge-coin-win</td>
+            </tr>
+            <tr>
+                <td>mativve</td>
+                <td>391539__mativve__electro-win-sound</td>
+            </tr>
+            <tr>
+                <td>lextrack</td>
+                <td>265306__lextrack__climbing-the-ladder</td>
+            </tr>
+            <tr>
+                <td>zovipoland</td>
+                <td>517724__zovipoland__clothes-drop-3</td>
+            </tr>
+            <tr>
+                <td>clearwavsound</td>
+                <td>540338__clearwavsound__bricks-sliding</td>
+            </tr>
+        </table>
+    </div>
 </div>
 
 
+@inject NavigationManager navigationManager
 @code {
 
+    private void Back()
+    {
+		navigationManager.NavigateTo("/");
+    }
 }
 

@@ -23,7 +23,7 @@
 
 <button @onclick="@(()=>Navigate(1))" class="btn-primary btn-lg">
     <h5>Level One</h5>
-    <h6>A bridge (not too far)</h6>
+    <h6>A bridge, not too far</h6>
 </button>
 <button @onclick="@(() => Navigate(2))" class="btn-primary  btn-lg">
     <h5>Level Two</h5>
@@ -53,17 +53,24 @@
 <button @onclick="@(() => Navigate(5))" class="btn-primary  btn-lg">
     <h5>Level Five</h5>
     <h6>
-        A bridge, unquestionably too far.
+        A bridge, slightly too far
     </h6>
 </button>
 
 <button @onclick="@(()=>Navigate(6))" class="btn-primary  btn-lg">
     <h5>Level Six</h5>
     <h6>
-        The Great Escape
-    </h6	
+        A bridge, unquestionably too far
+    </h6>	
 </button>
-<button @onclick="@(()=>Navigate("ThankYou"))" class="btn-info btn-lg">Thank You & Attributions</button>
+
+<button @onclick="@(()=>Navigate(7))" class="btn-primary  btn-lg">
+    <h5>Level Seven</h5>
+    <h6>
+        The Great Escape
+    </h6>	
+</button>
+<button @onclick="@(()=>Navigate("ThankYou"))" class="btn-secondary btn-lg">Thank You & Attributions</button>
 
 
 
