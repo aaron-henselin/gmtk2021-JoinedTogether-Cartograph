@@ -2,17 +2,19 @@
 
 
 
+<div id="game" style="display: none;">
+    <CastleGrid Floor="@CurrentFloor"
+                Descended="@(coord=>OnDescended(coord))"
+                Ascended="@(coord=>OnAscended(coord))"
+                WinCondition="@TestWinCondition"
+                WinConditionReached="@(()=>OnWinConditionReached())"
+                ResetRequested="@OnReset" @ref="_grid"
+                EnableBackpack="@EnableBackpack"/>
+
+    <p style="margin-top: 30px;font-style: italic;">Stuck? Press 'R' at any time to restart.</p>
+</div>
 
 
-<CastleGrid Floor="@CurrentFloor"
-            Descended="@(coord=>OnDescended(coord))"
-            Ascended="@(coord=>OnAscended(coord))"
-			WinCondition="@TestWinCondition"
-            WinConditionReached="@(()=>OnWinConditionReached())"
-            ResetRequested="@OnReset" @ref="_grid"
-            EnableBackpack="@EnableBackpack"/>
-
-<p style="margin-top: 30px;font-style: italic;">Stuck? Press 'R' at any time to restart.</p>
 
 @inject IJSRuntime JSRuntime
 @code
@@ -71,12 +73,16 @@
     private async Task OnWinConditionReached()
     {
         await JSRuntime.InvokeAsync<string>("PlayWinSound");
+        await JSRuntime.InvokeAsync<string>("hideGame");
+        await Task.Delay(200);
         await WinConditionReached.InvokeAsync();
     }
 
     private async Task OnAscended(IReadOnlyCollection<FloorCoord> ascCoods)
     {
         await JSRuntime.InvokeAsync<string>("PlayLadderSound");
+        await JSRuntime.InvokeAsync<string>("flashGame");
+        await Task.Delay(200);
 
         var ladderPositions = CurrentFloor
             .Layout
@@ -115,6 +121,8 @@
     private async Task OnDescended(IReadOnlyCollection<FloorCoord> descCoods)
     {
         await JSRuntime.InvokeAsync<string>("PlayLadderSound");
+        await JSRuntime.InvokeAsync<string>("flashGame");
+        await Task.Delay(200);
 
         var ladderPositions = CurrentFloor
             .Layout

@@ -113,6 +113,25 @@
         window.PlayBackpackSound = function () {
             document.getElementById('backpack').play();
         }
+
+        window.hideGame = function () {
+            $('#game').stop();
+            $('#game').fadeOut(200);
+        }
+
+        window.showGame = function () {
+            $('#game').stop();
+            $('#game').fadeIn(200);
+        }
+
+        window.flashGame = function () {
+            $('#game').stop();
+            $('#game').fadeOut(100,function () {
+                $('#game').stop();
+                $('#game').fadeIn(100);
+            });
+        }
+
     </script>
 </body>
 
