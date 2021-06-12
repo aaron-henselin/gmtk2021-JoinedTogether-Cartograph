@@ -1,0 +1,465 @@
+﻿@using JoinedTogetherGmtk2021.Game
+
+<style>
+
+    
+
+    td {
+
+        width: 96px;
+        border-spacing: 0px;
+    }
+    .floor * {
+        padding: 0;
+        margin: 0;
+    }
+    .floor ul {
+        list-style: none;
+        min-width: 96px;
+
+    }
+	.floor:focus-visible {
+        outline: none;
+    }
+
+    .drop-message {
+        display: none;
+    }
+
+    .player {
+        width: 64px;
+        height: 85.3px;
+        background: url(kenney/character_maleAdventurer_sheetHD.png) 0 0;
+        position: absolute;
+        transform: scale(0.7);
+        margin-left: 15px;
+    }
+
+
+
+    .room {
+        width: 96px;
+        height: 96px;
+    }
+    .PATHN_S_ {
+        background: url(rooms.png) 0 0;
+    }
+    .PATHN___ {
+        background: url(rooms.png) -192px 0px;
+    }
+    .PATH_E_W {
+        background: url(rooms.png) -288px 0;
+    }
+    .PATH__S_ {
+        background: url(rooms.png) -384px 0;
+    }
+    .PATH__SW {
+        background: url(rooms.png) 0 -96px;
+    }
+    .PATHN__W {
+        background: url(rooms.png) -96px -96px;
+    }
+    .PATHNE__ {
+        background: url(rooms.png) -192px -96px;
+    }
+    .PATH_ES_ {
+        background: url(rooms.png) -288px -96px;
+    }
+
+    .exit {
+        width: 64px;
+        height: 85.3px;
+        background: url(kenney/banner.png) 0 0;
+        position: absolute;
+        transform: scale(0.7);
+        margin-left: 15px;
+    }
+
+    .empty-tile {
+        animation: pulse 8s infinite ease-in-out;
+    }
+
+	.draggable {
+        animation: pulse-scale 8s infinite ease-in-out;
+    }
+
+    .immovable {
+        filter: grayscale(100%);
+    }
+
+	.player,.exit {
+        z-index: 999999999;
+    }
+
+
+    @@keyframes pulse-scale {
+        0% { transform: scale(0.95); }
+        50% { transform: scale(1);  }
+        100% { transform: scale(0.95); }
+    }
+
+    @@keyframes sway {
+        0% { transform: rotate(-1deg); }
+        100% { transform: rotate(1deg); }
+    }
+
+    @@keyframes pulse {
+        0% { transform: scale(0.9); opacity: 0.05; }
+        50% { transform: scale(1); opacity: .1; }
+        100% { transform: scale(0.9); opacity: 0.05; }
+    }
+</style>
+
+
+
+<div class="floor" @ref="floorRef" tabindex="0" @onkeydown="HandleKeyDown">
+
+    @if (Floor != null)
+    {
+		
+        string floorName = "Ground Floor";
+        if (Floor.Depth > 1)
+            floorName = "Basement " + (Floor.Depth - 1);
+        
+        <h6>@floorName</h6>
+
+        <table style="margin-top: 10px;">
+			
+            @for (int y = 0; y < Floor.Height; y++)
+            {
+                <tr>
+                    @for (int x = 0; x < Floor.Width; x++)
+                    {
+                        var floorCoord = new FloorCoord {X = x, Y = y};
+                        var number = floorCoord;	
+                        var room = Floor.Layout[floorCoord];
+                        var slotIsEmpty = room == null;
+                        var isEditingAnyItem = EditingIndex.HasValue;
+                        var isEditingThisItem = EditingIndex.HasValue && floorCoord.Equals(EditingIndex.Value);
+
+                        var objectsAtPosition = Floor.GameObjects.Where(x => x.Position.Equals(floorCoord));
+
+                        <td>
+							
+                            <ul @key="@number" class="dropzone @(GetDragStateCss(number)) @(isEditingThisItem ? "bg-dark" : "") no-padding" ondragover="event.preventDefault();"
+                                @ondrop="@(()=>HandleDrop(number))"
+                                @ondragenter="@(()=>HandleDragEnter(number))"
+                                @ondragleave="@(()=>HandleDragLeave(number))">
+
+                                @if (!isEditingAnyItem)
+                                {
+                                    @if (!slotIsEmpty)
+                                    {
+
+                                        
+										@if (objectsAtPosition.Any())
+										{
+											if (objectsAtPosition.Any(x => x.IsPlayer))
+										    {
+										        <DIV class="player"/>
+										    }
+										    if (objectsAtPosition.Any(x => x.IsExit))
+										    {
+										        <DIV class="exit"/>
+										    } 
+										    <div class="immovable room @room.RoomType.Name">
+
+                                            </div>
+											
+										}
+										else if (room.Locked)
+										{
+										    <div class="immovable room @room.RoomType.Name">
+
+                                            </div>
+										}
+										else
+										{
+										    <li class="favorites-list-item draggable original-contents" draggable="true" @ondragstart="@(() => HandleDragStart(number))">
+                                                <div class="room @room.RoomType.Name">
+
+                                                </div>
+                                            </li>
+										}
+
+                                    }
+                                    else
+                                    {
+                                        <li class="favorites-list-item original-contents">
+											
+											@{
+												var floorStyle = (Floor.Depth-1) % 5;
+											    var arr = new[] {"Square", "Diamond", "Circle", "Cross", "Shield"};
+											}
+
+                                            <img src="@($"kenney/element{arr[floorStyle]}.png")" width="96" height="96" class="empty-tile"/>
+                                        </li>
+
+                                        
+  @*                                      <button class="btn btn-link empty" @onclick="@(()=>HandleAdd(number))">
+                                            <h6>Empty</h6>
+                                            <h6>
+                                                <span class="oi oi-plus"></span>
+                                            </h6>
+                                        </button>*@
+
+                                    }
+                                    <h6 class="drop-message">Drop here.</h6>
+                                }
+                                else
+                                {
+                                    var textColor = isEditingThisItem ? "text-white": string.Empty;
+                                    var displayCode = "ROOM TYPE";//favorite?.GridCell.ToString();
+                                    if (slotIsEmpty && isEditingThisItem)
+                                    {
+                                        displayCode = "Adding";
+                                    }
+
+                                    <li class="favorites-list-item @textColor">
+                                        <h6 class="display-code">@displayCode</h6>
+                                        <h6>
+                                            <span class="oi">&nbsp;</span>
+                                        </h6>
+                                    </li>
+                                }
+
+
+                            </ul>
+                        </td>
+                    }
+                </tr>			    
+            }
+        </table>
+        
+    }
+
+</div>
+
+@inject IJSRuntime JSRuntime
+@code
+{
+    [Parameter]
+    public EventCallback ResetRequested { get; set; }
+
+    [Parameter]
+    public EventCallback WinConditionReached { get; set; }
+
+    [Parameter]
+    public EventCallback<FloorCoord> Descended { get; set; }
+
+    [Parameter]
+    public EventCallback<FloorCoord> Ascended { get; set; }
+
+    [Parameter]
+    public EventCallback<FloorCoord> EditStarted { get; set; }
+
+    [Parameter]
+    public EventCallback<FloorCoord> AddStarted { get; set; }
+    [Parameter]
+    public EventCallback<FloorCoord> DeleteStarted { get; set; }
+
+    [Parameter]
+    public EventCallback Reordered { get; set; }
+
+
+    [Parameter]
+    public Floor Floor { get; set; }
+
+    [Parameter]
+    public FloorCoord? EditingIndex { get; set; }
+
+    public FloorCoord? Player { get; set; }
+
+    public FloorCoord Payload { get; set; }
+    Dictionary<FloorCoord, bool> _dragStates = new Dictionary<FloorCoord, bool>();
+
+	
+
+    private string GetDragStateCss(FloorCoord i)
+    {
+        if (!_dragStates.ContainsKey(i))
+            _dragStates[i] = false;
+
+        return _dragStates[i] ? "can-drop" : string.Empty;
+    }
+
+    private bool IsLockedCoord(FloorCoord i)
+    {
+        return (this.Floor.Layout[i] != null && this.Floor.Layout[i].Locked) || this.Floor.GameObjects.Any(x => i.Equals(x.Position));
+    }
+
+    private void HandleDragEnter(FloorCoord i)
+    {
+        if (IsLockedCoord(i))
+            return;
+        
+        _dragStates[i] = true;
+    }
+
+    private void HandleDragLeave(FloorCoord i)
+    {
+        if (IsLockedCoord(i))
+            return;
+
+        //Console.WriteLine($"HandleDragLeave {i}");
+        _dragStates[i] = false;
+    }
+
+    private async Task HandleDrop(FloorCoord i)
+    {
+        if (IsLockedCoord(i))
+            return;
+
+        //Console.WriteLine($"HandleDrop {i}");
+        _dragStates[i] = false;
+
+        var originalContents = Floor.Layout[i];
+        var newContents = Floor.Layout[Payload];
+
+        Floor.Layout[Payload] = originalContents;
+        Floor.Layout[i] = newContents;
+
+        if (Floor.Layout[Payload] != null)
+            Floor.Layout[Payload].GridCell = Payload;
+
+        if (Floor.Layout[i] != null)
+            Floor.Layout[i].GridCell = i;
+
+
+        await JSRuntime.InvokeAsync<string>("PlayBrickSound"); 
+
+
+        await Reordered.InvokeAsync(this);
+    }
+
+    private void HandleDragStart(FloorCoord i)
+    {
+        //Console.WriteLine($"HandleDragStart {i}");
+        Payload = i;
+    }
+
+    private async Task HandleDelete(FloorCoord i)
+    {
+        await DeleteStarted.InvokeAsync(i);
+
+    }
+
+    private async Task HandleBeginEdit(FloorCoord i)
+    {
+        await EditStarted.InvokeAsync(i);
+    }
+
+    private async Task HandleAdd(FloorCoord i)
+    {
+        await AddStarted.InvokeAsync(i);
+    }
+
+    private ElementReference floorRef;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await floorRef.FocusAsync();
+        }
+    }
+
+    private void HandleKeyDown(KeyboardEventArgs e)
+    {
+		Console.WriteLine(e.Key);
+
+        var reset = e.Key == "R" || e.Key == "r";
+        if (reset)
+        {
+            ResetRequested.InvokeAsync();
+            return;
+        }
+
+
+        var validKey = Directions.DirectionsByKeyMapping.ContainsKey(e.Key);
+        if (!validKey)
+            return;
+
+        var direction = Directions.DirectionsByKeyMapping[e.Key];
+		
+        var descLadderPositions = Floor.Layout.Where(x => true == x.Value?.RoomType.HasLadderDesc).Select(x => x.Key);
+        var ascLadderPositions = Floor.Layout.Where(x => true == x.Value?.RoomType.HasLadderAsc).Select(x => x.Key);
+
+   
+        var players = Floor.GameObjects.Where(x => x.IsPlayer);
+        foreach (var gameObject in players)
+        {
+            var oldPosition = gameObject.Position;
+
+            var shouldDescend = descLadderPositions.Contains(oldPosition) && direction.Equals(Directions.Down);
+            var shouldAscend = ascLadderPositions.Contains(oldPosition) && direction.Equals(Directions.Up);
+
+            if (shouldDescend)
+                Descended.InvokeAsync(oldPosition);
+
+            if (shouldAscend)
+                Ascended.InvokeAsync(oldPosition);
+
+            if (!shouldAscend && !shouldDescend)
+            {
+                var newPosition = gameObject.Position.Add(direction);
+
+                var isValidCoordinate = Floor.Layout.ContainsKey(newPosition);
+                if (isValidCoordinate)
+                {
+                    var nextRoom = Floor.Layout[newPosition];
+                    if (nextRoom == null)
+                    {
+                        Console.WriteLine("can't move to position w/o room: " + gameObject.Position);
+                        continue;
+                    }
+
+                    var currentRoom = Floor.Layout[oldPosition];
+
+                    var doesConnect = currentRoom.ConnectsTo(nextRoom,direction);
+                    if (!doesConnect)
+                    {
+                        Console.WriteLine("can't move to position because the rooms don't connect: " + currentRoom.RoomType + " -> " + nextRoom.RoomType);
+                        continue;
+                    }
+
+
+                    currentRoom.Locked = true;
+                    gameObject.Position = newPosition;
+
+					
+                    var playerPositions = Floor.GameObjects.Where(x => x.IsPlayer).Select(x => x.Position);
+                    var exitPositions = Floor.GameObjects.Where(x => x.IsExit).Select(x => x.Position);
+                    var winConditions = playerPositions.Intersect(exitPositions);
+                    if (winConditions.Any())
+                        WinConditionReached.InvokeAsync();
+                    else
+                    {
+                        var descend = descLadderPositions.Contains(newPosition);
+                        if (descend)
+                            Descended.InvokeAsync(newPosition);
+
+                        var ascend = ascLadderPositions.Contains(newPosition);
+                        if (ascend)
+                            Ascended.InvokeAsync(newPosition);
+                    }
+
+
+
+                    Console.WriteLine("new position:"+gameObject.Position);
+				
+                }
+                else
+                {
+                    Console.WriteLine("invalid position: "+gameObject.Position);
+                }
+            }
+
+
+        }
+
+
+        
+		this.StateHasChanged();
+    }
+}
+

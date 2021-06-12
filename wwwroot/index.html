@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>JoinedTogetherGmtk2021</title>
+    <base href="/" />
+    <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/app.css" rel="stylesheet" />
+    <link href="JoinedTogetherGmtk2021.styles.css" rel="stylesheet" />
+    <link href='https://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
+    <style>
+        
+        @keyframes fadeIn {
+            0%
+            {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .footer {
+            flex-shrink: 0;
+            display: flex;
+            position: absolute;
+            bottom: 0;
+        }
+
+        .footer .jumbotron {
+            margin: 0;
+        }
+
+        #app {
+            width: 660px;
+            margin: auto;
+        }
+
+        body {
+            text-align: center;
+        }
+
+        * {
+            font-family: 'Lato', sans-serif;
+            font-weight: 400;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">Loading...</div>
+
+<div class="footer">
+    <div id="music" style="width: 300px;">
+        <div class="mt-4" id="music_prompt">
+
+            <div class="jumbotron">
+
+                <h2>Background Music</h2>
+                <i>
+                    Got a pair of ears? I recommend playing this game set to the dulcet tones of Artificial OS by Corrupted Data Corp™.
+                    And then you should buy the album.
+                </i><br />
+                <b>It's really good.</b>
+                <button id="bandcamp_launch" class="btn btn-primary btn-lg my-4" onclick="jsHelpers.startBandcamp()">Tune In</button>
+                <!--<a class="btn btn-primary btn-lg my-4" href="spotify:album:4iXJfZ6PEqPObEjjKSbRq3">Open In Spotify</a>-->
+            </div>
+
+        </div>
+        <div id="bandcamp_frame" style="display: none;">
+
+        </div>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+
+    var jsHelpers = {};
+    jsHelpers.startBandcamp = function () {
+
+
+        $(music_prompt).hide();
+        var node = $('<iframe style="border: 0; width: 100%; height: 120px;" src="https://bandcamp.com/EmbeddedPlayer/album=2327617860/size=large/bgcol=ffffff/linkcol=0687f5/tracklist=false/artwork=none/transparent=true/" seamless><a href="https://whitelabrecs.bandcamp.com/album/svalbar">Svalbarð by Glåsbird</a></iframe>');
+        $(bandcamp_frame).show().append(node);
+    }
+
+</script>
+
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+    <script src="_framework/blazor.webassembly.js"></script>
+
+    <audio id="ladder" src="/media/ladder.wav" />
+    <audio id="brick" src="/media/brick.wav" />
+    <audio id="win" src="/media/win.wav" />
+    <script>
+        window.PlayBrickSound = function () {
+            document.getElementById('brick').play();
+        }
+        window.PlayLadderSound = function () {
+            document.getElementById('ladder').play();
+        }
+        window.PlayWinSound = function () {
+            document.getElementById('win').play();
+        }
+    </script>
+</body>
+
+</html>

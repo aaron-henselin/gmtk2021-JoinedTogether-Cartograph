@@ -1,0 +1,40 @@
+﻿@page "/1"
+@using JoinedTogetherGmtk2021.Game
+
+<h2>
+	Level One-ish
+</h2>
+
+<CastleScenario FloorFactory="@FloorTemplate" WinConditionReached="@Next"/>
+
+@inject NavigationManager NavigationManager
+@code
+{
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+    }
+
+    private void Next()
+    {
+		NavigationManager.NavigateTo("2");
+    }
+
+    private Floor FloorTemplate()
+    {
+        var floor = new Floor(6, 6);
+        floor.Layout[new FloorCoord {X = 1, Y = 2}] = new Room(RoomTypes.PATH_ES_);
+        floor.Layout[new FloorCoord {X = 4, Y = 2}] = new Room(RoomTypes.PATH_E_W);
+
+        floor.Layout[new FloorCoord {X = 2, Y = 0}] = new Room(RoomTypes.PATH_E_W);
+        floor.Layout[new FloorCoord {X = 3, Y = 5}] = new Room(RoomTypes.PATH_E_W);
+
+        floor.GameObjects.Add(new GameObject{Position = new FloorCoord{X=1,Y=2},IsPlayer = true});
+        floor.GameObjects.Add(new GameObject{Position = new FloorCoord{X=4,Y=2},IsExit = true});
+
+        return floor;
+    }
+
+}
+
+

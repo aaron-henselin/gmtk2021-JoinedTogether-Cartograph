@@ -1,0 +1,32 @@
+﻿@page "/"
+@using JoinedTogetherGmtk2021.Game
+
+
+<h1>
+    Cartograph
+</h1>
+
+<button @onclick="@(()=>Navigate(1))" class="btn-info btn-lg">Level One</button>
+<button @onclick="@(()=>Navigate(2))" class="btn-info btn-lg">Level Two</button>
+<button @onclick="@(()=>Navigate(3))" class="btn-info btn-lg">Level Three</button>
+<button @onclick="@(()=>Navigate(4))" class="btn-info btn-lg">Level Four</button>
+
+
+@inject NavigationManager NavigationManager
+@code
+{
+	
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+       
+    }
+
+    private void Navigate(int num)
+    {
+        NavigationManager.NavigateTo(num.ToString());
+    }
+
+}
+
+

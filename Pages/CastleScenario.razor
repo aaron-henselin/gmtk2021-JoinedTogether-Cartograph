@@ -1,0 +1,78 @@
+﻿@using JoinedTogetherGmtk2021.Game
+
+
+
+
+
+<CastleGrid Floor="@CurrentFloor"
+            Descended="@(coord=>OnDescended(coord))"
+            Ascended="@(coord=>OnAscended(coord))"
+            WinConditionReached="@(()=>OnWinConditionReached())"
+            ResetRequested="@OnReset"/>
+
+<p style="margin-top: 30px;font-style: italic;">Stuck? Press 'R' at any time to restart.</p>
+
+@inject IJSRuntime JSRuntime
+@code
+{
+	[Parameter]
+	public Func<Floor> FloorFactory { get; set; }
+
+	[Parameter]
+	public EventCallback WinConditionReached { get; set; }
+
+    private Floor CurrentFloor { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+		StartGame();
+
+    }
+
+    private void StartGame()
+    {
+        var floorTemplate = FloorFactory();
+        this.CurrentFloor = floorTemplate;
+    }
+
+    private void OnReset()
+    {
+        StartGame();
+
+        StateHasChanged();
+    }
+
+    private async Task OnWinConditionReached()
+    {
+        await JSRuntime.InvokeAsync<string>("PlayWinSound");
+        await WinConditionReached.InvokeAsync();
+    }
+
+    private async Task OnAscended(FloorCoord descCood)
+    {
+        await JSRuntime.InvokeAsync<string>("PlayLadderSound"); 
+		
+
+        CurrentFloor = CurrentFloor.ParentFloor;
+        StateHasChanged();
+    }
+
+    private async Task OnDescended(FloorCoord descCood)
+    {
+        await JSRuntime.InvokeAsync<string>("PlayLadderSound"); 
+
+        var lowerFloor = FloorFactory();
+        lowerFloor.Layout[descCood] = new Room(RoomTypes.PATH__S_);
+        lowerFloor.GameObjects.Add(new GameObject{Position = descCood,IsPlayer = true});
+        lowerFloor.ParentFloor = CurrentFloor;
+        CurrentFloor = lowerFloor;
+        StateHasChanged();
+    }
+
+
+
+
+}
+
