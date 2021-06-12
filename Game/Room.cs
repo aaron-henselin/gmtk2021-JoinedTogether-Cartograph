@@ -22,10 +22,14 @@ namespace JoinedTogetherGmtk2021.Game
 
             return this.RoomType.ConnectsTo(other.RoomType, direction);
         }
-
-        public FloorCoord GridCell { get; set; }//needed?
+        
 
         public bool Locked { get; set; }
+
+        public override string ToString()
+        {
+            return $"RoomType={RoomType}, Locked={Locked}";
+        }
     }
 
     public class Floor
@@ -113,6 +117,11 @@ namespace JoinedTogetherGmtk2021.Game
         public bool IsBackpack => this.Equals(Backpack);
 
         public static FloorCoord Backpack => new FloorCoord {X = -1, Y = -1};
+
+        public override string ToString()
+        {
+            return $"X={X},Y={Y}";
+        }
     }
 
     public static class RoomTypes

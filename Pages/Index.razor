@@ -3,19 +3,79 @@
 
 
 <h1>
-    Cartograph
+    The Cartograph Infinite
 </h1>
 
 <button @onclick="@(()=>Navigate(1))" class="btn-info btn-lg">Level One</button>
 <button @onclick="@(()=>Navigate(2))" class="btn-info btn-lg">Level Two</button>
 <button @onclick="@(()=>Navigate(3))" class="btn-info btn-lg">Level Three</button>
 <button @onclick="@(()=>Navigate(4))" class="btn-info btn-lg">Level Four</button>
+<button @onclick="@(()=>ShowThankYou())" class="btn-info btn-lg">Thank You & Attributions</button>
+
+
+
+
+@if (_showThankYou)
+{
+    <div class="thankyou">
+    <h6>With apologies to:</h6>
+
+    <h6>Art</h6>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Author</th>
+            <th scope="col">Content</th>
+        </tr>
+        </thead>
+        <tr>
+            <td>SecretHideout</td>
+            <td>RogueDungeon</td>
+        </tr>
+        <tr>
+            <td>kenney</td>
+            <td>cartographypack, tooncharacters</td>
+        </tr>
+    </table>
+
+
+    <h6>Foley</h6>
+    <table  class="table">
+        <tr>
+            <th scope="col">Author</th>
+            <th scope="col">Content</th>
+        </tr>
+        <tr>
+            <td>steaq</td>
+            <td>387232__steaq__badge-coin-win</td>
+        </tr>
+        <tr>
+            <td>mativve</td>
+            <td>391539__mativve__electro-win-sound</td>
+        </tr>
+        <tr>
+            <td>lextrack</td>
+            <td>265306__lextrack__climbing-the-ladder</td>
+        </tr>
+        <tr>
+            <td>zovipoland</td>
+            <td>517724__zovipoland__clothes-drop-3</td>
+        </tr>
+        <tr>
+            <td>clearwavsound</td>
+            <td>540338__clearwavsound__bricks-sliding</td>
+        </tr>
+    </table>
+    </div>
+}
 
 
 @inject NavigationManager NavigationManager
 @code
 {
-	
+    private bool _showThankYou { get; set; }
+
+
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
@@ -27,6 +87,12 @@
         NavigationManager.NavigateTo(num.ToString());
     }
 
+	
+    private void ShowThankYou()
+    {
+        _showThankYou = true;
+        this.StateHasChanged();
+    }
 }
 
 

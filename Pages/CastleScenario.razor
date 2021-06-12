@@ -74,16 +74,45 @@
         await WinConditionReached.InvokeAsync();
     }
 
-    private async Task OnAscended(FloorCoord descCood)
+    private async Task OnAscended(IReadOnlyCollection<FloorCoord> ascCoods)
     {
-        await JSRuntime.InvokeAsync<string>("PlayLadderSound"); 
-		
+        await JSRuntime.InvokeAsync<string>("PlayLadderSound");
 
-        CurrentFloor = CurrentFloor.ParentFloor;
+        var ladderPositions = CurrentFloor
+            .Layout
+            .Where(x => x.Value != null && x.Value.RoomType.HasLadderAsc)
+            .Select(x => x.Key);
+
+        Floor upperFloor;
+        if (CurrentFloor.ParentFloor != null)
+            upperFloor = CurrentFloor.ParentFloor;
+        else
+            upperFloor = FloorFactory();
+
+        foreach (var ladderPosition in ladderPositions)
+        {
+            var currentRoomType = upperFloor.Layout[ladderPosition]?.RoomType;
+            //if (!currentRoomType.Equals(RoomTypes.PATHN___))
+            //{
+                Console.WriteLine("adding ladder to "+ladderPosition);
+                upperFloor.Layout[ladderPosition] = new Room(RoomTypes.PATHN___);
+            //}
+        }
+
+        foreach (var ascCood in ascCoods)
+        {
+            var playerExistsAtPosition = upperFloor.GameObjects.Any(x => x.IsPlayer && x.Position.Equals(ascCood));
+            if (!playerExistsAtPosition)
+                upperFloor.GameObjects.Add(new GameObject{Position = ascCood,IsPlayer = true});
+        }
+
+		Console.WriteLine("ASSIGING CURRENT FLOOR");
+        this.CurrentFloor = upperFloor;
+
         StateHasChanged();
     }
 
-    private async Task OnDescended(FloorCoord descCood)
+    private async Task OnDescended(IReadOnlyCollection<FloorCoord> descCoods)
     {
         await JSRuntime.InvokeAsync<string>("PlayLadderSound");
 
@@ -96,7 +125,13 @@
 		foreach (var ladderPosition in ladderPositions)
             lowerFloor.Layout[ladderPosition] = new Room(RoomTypes.PATH__S_);
 
-        lowerFloor.GameObjects.Add(new GameObject{Position = descCood,IsPlayer = true});
+        foreach (var descCood in descCoods)
+        {
+            var playerExistsAtPosition = lowerFloor.GameObjects.Any(x => x.IsPlayer && x.Position.Equals(descCood));
+            if (!playerExistsAtPosition)
+                lowerFloor.GameObjects.Add(new GameObject{Position = descCood,IsPlayer = true});
+        }
+
         lowerFloor.ParentFloor = CurrentFloor;
         CurrentFloor = lowerFloor;
         StateHasChanged();

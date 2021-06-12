@@ -95,8 +95,9 @@
         <a class="dismiss">🗙</a>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
-
-    <audio id="ladder" src="/media/ladder.wav" />
+    
+<audio id="backpack" src="/media/backpack.wav" />
+<audio id="ladder" src="/media/ladder.wav" />
     <audio id="brick" src="/media/brick.wav" />
     <audio id="win" src="/media/win.wav" />
     <script>
@@ -108,6 +109,9 @@
         }
         window.PlayWinSound = function () {
             document.getElementById('win').play();
+        }
+        window.PlayBackpackSound = function () {
+            document.getElementById('backpack').play();
         }
     </script>
 </body>

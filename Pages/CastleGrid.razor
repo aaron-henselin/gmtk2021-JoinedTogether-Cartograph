@@ -286,10 +286,10 @@
     public EventCallback WinConditionReached { get; set; }
 
     [Parameter]
-    public EventCallback<FloorCoord> Descended { get; set; }
+    public EventCallback<IReadOnlyCollection<FloorCoord>> Descended { get; set; }
 
     [Parameter]
-    public EventCallback<FloorCoord> Ascended { get; set; }
+    public EventCallback<IReadOnlyCollection<FloorCoord>> Ascended { get; set; }
 
     [Parameter]
     public EventCallback<FloorCoord> EditStarted { get; set; }
@@ -323,6 +323,18 @@
     }
 
 	public RoomType? BackpackContents { get; set; }
+
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        Console.WriteLine("RECEIVED NEW FLOOR");
+
+		foreach (var kvp in Floor.Layout.Where(x => x.Value != null))
+		    Console.WriteLine(kvp.Key+": "+kvp.Value);
+        
+    }
 
     private string GetDragStateCss(FloorCoord i)
     {
@@ -388,6 +400,8 @@
 
         if (!dropTo.IsBackpack)
             await JSRuntime.InvokeAsync<string>("PlayBrickSound"); 
+		else
+            await JSRuntime.InvokeAsync<string>("PlayBackpackSound"); 
 
         await Reordered.InvokeAsync(this);
     }
@@ -423,14 +437,14 @@
         }
     }
 
-    private void HandleKeyDown(KeyboardEventArgs e)
+    private async Task HandleKeyDown(KeyboardEventArgs e)
     {
 		Console.WriteLine(e.Key);
 
         var reset = e.Key == "R" || e.Key == "r";
         if (reset)
         {
-            ResetRequested.InvokeAsync();
+            await ResetRequested.InvokeAsync();
             return;
         }
 
@@ -444,7 +458,10 @@
         var descLadderPositions = Floor.Layout.Where(x => true == x.Value?.RoomType.HasLadderDesc).Select(x => x.Key);
         var ascLadderPositions = Floor.Layout.Where(x => true == x.Value?.RoomType.HasLadderAsc).Select(x => x.Key);
 
-   
+
+        List<FloorCoord> ascends = new List<FloorCoord>();
+        List<FloorCoord> descends = new List<FloorCoord>();
+
         var players = Floor.GameObjects.Where(x => x.IsPlayer);
         foreach (var gameObject in players)
         {
@@ -454,10 +471,10 @@
             var shouldAscend = ascLadderPositions.Contains(oldPosition) && direction.Equals(Directions.Up);
 
             if (shouldDescend)
-                Descended.InvokeAsync(oldPosition);
+                descends.Add(oldPosition);
 
             if (shouldAscend)
-                Ascended.InvokeAsync(oldPosition);
+                ascends.Add(oldPosition);
 
             if (!shouldAscend && !shouldDescend)
             {
@@ -489,16 +506,16 @@
 
                     var testWinCondition = WinCondition();
                     if (testWinCondition)
-                        WinConditionReached.InvokeAsync();
+                        await WinConditionReached.InvokeAsync();
                     else
                     {
                         var descend = descLadderPositions.Contains(newPosition);
                         if (descend)
-                            Descended.InvokeAsync(newPosition);
+                            descends.Add(newPosition);
 
                         var ascend = ascLadderPositions.Contains(newPosition);
                         if (ascend)
-                            Ascended.InvokeAsync(newPosition);
+                            ascends.Add(newPosition);
                     }
 
 
@@ -513,10 +530,14 @@
             }
 
 
+
         }
 
+		if (ascends.Any())
+			await Ascended.InvokeAsync(ascends);
+        else if (descends.Any())
+            await Descended.InvokeAsync(descends);
 
-        
 		this.StateHasChanged();
     }
 }
