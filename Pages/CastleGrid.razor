@@ -195,13 +195,7 @@
                                             <img src="@($"kenney/element{arr[floorStyle]}.png")" width="96" height="96" class="empty-tile"/>
                                         </li>
 
-                                        
-  @*                                      <button class="btn btn-link empty" @onclick="@(()=>HandleAdd(number))">
-                                            <h6>Empty</h6>
-                                            <h6>
-                                                <span class="oi oi-plus"></span>
-                                            </h6>
-                                        </button>*@
+
 
                                     }
                                     <h6 class="drop-message">Drop here.</h6>
@@ -229,6 +223,50 @@
                     }
                 </tr>			    
             }
+			
+			@if (EnableBackpack)
+			{
+			    <tr>
+                    <td>
+                        <img src="@($"kenney/compass.png")" width="96" height="96"/>
+                    </td>
+                    <td>
+                        @{
+                            FloorCoord backpackNumber = FloorCoord.Backpack;
+                            var backpackEmpty = BackpackContents == null;
+                        }
+                        <ul @key="@backpackNumber" class="dropzone @(GetDragStateCss(backpackNumber)) no-padding" ondragover="event.preventDefault();"
+                            @ondrop="@(() => HandleDrop(backpackNumber))"
+                            @ondragenter="@(() => HandleDragEnter(backpackNumber))"
+                            @ondragleave="@(() => HandleDragLeave(backpackNumber))">
+						
+                            @if (!backpackEmpty)
+                            {
+                                <li class="favorites-list-item draggable original-contents" draggable="true" @ondragstart="@(() => HandleDragStart(backpackNumber))">
+                                    <div class="room @BackpackContents.Value.Name">
+
+                                    </div>
+                                </li>
+                            }
+                            else
+                            {
+                                <img src="@($"kenney/elementSquare.png")" width="96" height="96"/>
+                            }
+                        </ul>
+                    </td>
+                    @for (int x = 0; x < Floor.Width - 2; x++)
+                    {
+                        <td>
+
+                        </td>
+                    }
+                </tr>
+            
+			}
+
+
+			
+
         </table>
         
     }
@@ -240,6 +278,9 @@
 {
     [Parameter]
     public EventCallback ResetRequested { get; set; }
+
+	[Parameter]
+	public Func<bool> WinCondition { get; set; }
 
     [Parameter]
     public EventCallback WinConditionReached { get; set; }
@@ -261,6 +302,9 @@
     [Parameter]
     public EventCallback Reordered { get; set; }
 
+	
+    [Parameter]
+    public bool EnableBackpack { get; set; }
 
     [Parameter]
     public Floor Floor { get; set; }
@@ -273,7 +317,12 @@
     public FloorCoord Payload { get; set; }
     Dictionary<FloorCoord, bool> _dragStates = new Dictionary<FloorCoord, bool>();
 
-	
+    public void ClearBackpack()
+    {
+        BackpackContents = null;
+    }
+
+	public RoomType? BackpackContents { get; set; }
 
     private string GetDragStateCss(FloorCoord i)
     {
@@ -285,7 +334,7 @@
 
     private bool IsLockedCoord(FloorCoord i)
     {
-        return (this.Floor.Layout[i] != null && this.Floor.Layout[i].Locked) || this.Floor.GameObjects.Any(x => i.Equals(x.Position));
+        return (!i.IsBackpack && this.Floor.Layout[i] != null && this.Floor.Layout[i].Locked) || this.Floor.GameObjects.Any(x => i.Equals(x.Position));
     }
 
     private void HandleDragEnter(FloorCoord i)
@@ -305,29 +354,40 @@
         _dragStates[i] = false;
     }
 
-    private async Task HandleDrop(FloorCoord i)
+    private async Task HandleDrop(FloorCoord dropTo)
     {
-        if (IsLockedCoord(i))
+        if (IsLockedCoord(dropTo))
             return;
 
         //Console.WriteLine($"HandleDrop {i}");
-        _dragStates[i] = false;
+        _dragStates[dropTo] = false;
 
-        var originalContents = Floor.Layout[i];
-        var newContents = Floor.Layout[Payload];
+        Room originalContents;
+        if (!dropTo.IsBackpack)
+            originalContents = Floor.Layout[dropTo];
+        else
+            originalContents = BackpackContents != null ? new Room(BackpackContents.Value) : null;
 
-        Floor.Layout[Payload] = originalContents;
-        Floor.Layout[i] = newContents;
+        Room newContents;
+        if (!Payload.IsBackpack)
+            newContents = Floor.Layout[Payload];
+        else
+            newContents = BackpackContents != null ? new Room(BackpackContents.Value) : null;
 
-        if (Floor.Layout[Payload] != null)
-            Floor.Layout[Payload].GridCell = Payload;
+        if (!Payload.IsBackpack)
+            Floor.Layout[Payload] = originalContents;
+        else
+            BackpackContents = originalContents?.RoomType;
 
-        if (Floor.Layout[i] != null)
-            Floor.Layout[i].GridCell = i;
+		if (!dropTo.IsBackpack)
+            Floor.Layout[dropTo] = newContents;
+		else
+		{
+		    BackpackContents = newContents?.RoomType;
+		}
 
-
-        await JSRuntime.InvokeAsync<string>("PlayBrickSound"); 
-
+        if (!dropTo.IsBackpack)
+            await JSRuntime.InvokeAsync<string>("PlayBrickSound"); 
 
         await Reordered.InvokeAsync(this);
     }
@@ -426,11 +486,9 @@
                     currentRoom.Locked = true;
                     gameObject.Position = newPosition;
 
-					
-                    var playerPositions = Floor.GameObjects.Where(x => x.IsPlayer).Select(x => x.Position);
-                    var exitPositions = Floor.GameObjects.Where(x => x.IsExit).Select(x => x.Position);
-                    var winConditions = playerPositions.Intersect(exitPositions);
-                    if (winConditions.Any())
+
+                    var testWinCondition = WinCondition();
+                    if (testWinCondition)
                         WinConditionReached.InvokeAsync();
                     else
                     {

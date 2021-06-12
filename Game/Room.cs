@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace JoinedTogetherGmtk2021.Game
@@ -108,6 +109,10 @@ namespace JoinedTogetherGmtk2021.Game
                 Y = Y+direction.Y
             };
         }
+
+        public bool IsBackpack => this.Equals(Backpack);
+
+        public static FloorCoord Backpack => new FloorCoord {X = -1, Y = -1};
     }
 
     public static class RoomTypes

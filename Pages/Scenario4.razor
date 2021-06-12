@@ -5,7 +5,7 @@
     Level Four-ish
 </h2>
 
-<CastleScenario FloorFactory="@FloorTemplate"/>
+<CastleScenario FloorFactory="@FloorTemplate" EnableBackpack="true"/>
 
 @code
 {
@@ -21,10 +21,11 @@
         
         floor.Layout[new FloorCoord {X = 2, Y = 1}] = new Room(RoomTypes.PATHN___);
 
-        floor.Layout[new FloorCoord {X = 2, Y = 4}] = new Room(RoomTypes.PATHN_S_);
+        floor.Layout[new FloorCoord {X = 4, Y = 4}] = new Room(RoomTypes.PATH_E_W);
+        floor.Layout[new FloorCoord {X = 2, Y = 4}] = new Room(RoomTypes.PATH_E_W);
 
         floor.GameObjects.Add(new GameObject{Position = new FloorCoord{X=1,Y=3},IsPlayer = true});
-        //floor.GameObjects.Add(new GameObject{Position = new FloorCoord{X=2,Y=4},IsExit = true});
+        floor.GameObjects.Add(new GameObject{Position = new FloorCoord{X=2,Y=4},IsExit = true});
 
         return floor;
     }
