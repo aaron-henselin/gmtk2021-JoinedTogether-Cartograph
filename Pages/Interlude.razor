@@ -33,41 +33,47 @@
         to {transform:rotate(0deg);}
     }
 
+    #interlude:focus-visible {
+        outline: none;
+    }
+
 </style>
-
-<h3>Interlude</h3>
-<div class="container">
-    <p>"It's impossible," the cartopher bemoaned. The hubris that gave birth to the notion that a tower of infinite depth could be demarcated had finally subsided.</p>
-    @if (_storyBeat > 0)
-    {
-        <p>The newfound was concern was escaping. Scrolls and sketches had long since been burned for kindling, and rations were quickly running down to "boiled shoe"</p>
-    }
-    @if (_storyBeat > 1)
-    {
-        <p>"Perhaps by focusing on remembering just one small part of this world, I can piece together a path back to the surface"</p>
-    }
-    @if (_storyBeat > 2)
-    {
-        <p>
-            You have gained <b>memory!</b>
-            <div style="width: 100%;">
-                <div style="margin: auto;">
+<div id="interlude" @ref=_interludeRef  tabindex="0" @onkeydown="HandleKeyDown">
+    <h3>Interlude</h3>
+    <div class="container">
+        <p>"It's impossible," the cartopher bemoaned. The hubris that gave birth to the notion that a tower of infinite depth could be demarcated had finally subsided.</p>
+        @if (_storyBeat > 0)
+        {
+            <p>The newfound was concern was escaping. Scrolls and sketches had long since been burned for kindling, and rations were quickly running down to "boiled shoe"</p>
+        }
+        @if (_storyBeat > 1)
+        {
+            <p>"Perhaps by focusing on remembering just one small part of this world, I can piece together a path back to the surface"</p>
+        }
+        @if (_storyBeat > 2)
+        {
+            <p>
+                You have gained <b>memory!</b>
+                <div style="width: 100%;">
+                    <div style="margin: auto;">
 					
-                    <img class="backpack-background2" src="@($"kenney/compass.png")" draggable="false" width="96" height="96" style="position: absolute;"/>
-                    <img class="backpack-background1" src="@($"kenney/compass.png")" draggable="false" width="96" height="96" style="position: absolute;"/>
-                    <img class="backpack" src="@($"kenney/elementSquare.png")" draggable="false" width="96" height="96"/>
+                        <img class="backpack-background2" src="@($"kenney/compass.png")" draggable="false" width="96" height="96" style="position: absolute;"/>
+                        <img class="backpack-background1" src="@($"kenney/compass.png")" draggable="false" width="96" height="96" style="position: absolute;"/>
+                        <img class="backpack" src="@($"kenney/elementSquare.png")" draggable="false" width="96" height="96"/>
 
+                    </div>
                 </div>
-			</div>
-        </p>
-        <p style="font-style: italic">
-            Drag something to your memory to remember it.
-        </p>
-    }
-    <div>
-        <button class="btn btn-primary float-right;" @onclick="Next">Next</button>
+            </p>
+            <p style="font-style: italic">
+                Drag something to your memory to remember it.
+            </p>
+        }
+        <div>
+            <button class="btn btn-primary float-right;" @onclick="Next">Next</button>
+        </div>
     </div>
 </div>
+
 
 @inject IJSRuntime JSRuntime;
 @inject NavigationManager NavigationManager
@@ -82,6 +88,22 @@
         {
             NavigationManager.NavigateTo("5");
         }
+    }
+
+    private ElementReference _interludeRef;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await _interludeRef.FocusAsync();
+        }
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        var isArrowRight = e.Code == "ArrowRight";
+        if (isArrowRight)
+            Next();
     }
 }
 

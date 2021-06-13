@@ -375,7 +375,7 @@
 
     public FloorCoord? Player { get; set; }
 
-    public FloorCoord Payload { get; set; }
+    public FloorCoord? Payload { get; set; }
     Dictionary<FloorCoord, bool> _dragStates = new Dictionary<FloorCoord, bool>();
 
     public void ClearBackpack()
@@ -432,8 +432,11 @@
         if (IsLockedCoord(dropTo))
             return;
 
-        //Console.WriteLine($"HandleDrop {i}");
+        //Console.WriteLine("DROP: "+Payload+" / "+dropTo);
+
         _dragStates[dropTo] = false;
+        if (Payload == null)
+            return;
 
         Room originalContents;
         if (!dropTo.IsBackpack)
@@ -442,13 +445,13 @@
             originalContents = BackpackContents != null ? new Room(BackpackContents.Value) : null;
 
         Room newContents;
-        if (!Payload.IsBackpack)
-            newContents = Floor.Layout[Payload];
+        if (!Payload.Value.IsBackpack)
+            newContents = Floor.Layout[Payload.Value];
         else
             newContents = BackpackContents != null ? new Room(BackpackContents.Value) : null;
 
-        if (!Payload.IsBackpack)
-            Floor.Layout[Payload] = originalContents;
+        if (!Payload.Value.IsBackpack)
+            Floor.Layout[Payload.Value] = originalContents;
         else
             BackpackContents = originalContents?.RoomType;
 
@@ -462,8 +465,9 @@
         if (!dropTo.IsBackpack)
             await JSRuntime.InvokeAsync<string>("PlayBrickSound"); 
 		else
-            await JSRuntime.InvokeAsync<string>("PlayBackpackSound"); 
+            await JSRuntime.InvokeAsync<string>("PlayBackpackSound");
 
+        Payload = null;
         await Reordered.InvokeAsync(this);
     }
 
