@@ -15,10 +15,12 @@
     {
         <p>
             You have gained <b>memory!</b>
-            <img src="inventory.PNG" style="display: block; margin: auto; margin-top: 10px;"/>
+            <div style="width: 100%;">
+                <img src="inventory.PNG" style="display: block; margin: auto; margin-top: 10px;"/>
+			</div>
         </p>
         <p style="font-style: italic">
-            Use this to remember stuff.
+            Drag something here to remember it.
         </p>
     }
     <div>
@@ -26,6 +28,7 @@
     </div>
 </div>
 
+@inject IJSRuntime JSRuntime;
 @inject NavigationManager NavigationManager
 @code {
     int _storyBeat = 0;

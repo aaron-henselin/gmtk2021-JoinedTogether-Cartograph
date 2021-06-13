@@ -83,6 +83,35 @@
         animation: pulse-scale 8s infinite ease-in-out;
     }
 
+	.backpack {
+        animation: pulse 8s infinite ease-in-out;
+    }
+
+	.backpack-background1 {
+        opacity: .2;
+		animation: spin1 16s infinite;
+    }
+
+    .backpack-background2 {
+        opacity: .2;
+        animation: spin2 16s infinite;
+    }
+
+	.backpack-cell .draggable {
+        opacity: .9;
+
+    }
+
+    @@keyframes spin1 {
+        from {transform:rotate(0deg);}
+        to {transform:rotate(360deg);}
+    }
+
+    @@keyframes spin2 {
+        from {transform:rotate(360deg);}
+        to {transform:rotate(0deg);}
+    }
+
     .immovable {
         filter: grayscale(100%);
     }
@@ -183,20 +212,20 @@
                                     }
                                     else
                                     {
-                                        <li class="favorites-list-item original-contents">
+                                        <li class="favorites-list-item original-contents" draggable="false">
 											
 											@{
 												var floorStyle = Math.Abs(Floor.Depth-1) % 3;
 											    var arr = new[] {"Square", "Diamond", "Circle", "Cross"};
 											}
 
-                                            <img src="@($"kenney/element{arr[floorStyle]}.png")" width="96" height="96" class="empty-tile"/>
+                                            <img draggable="false" src="@($"kenney/element{arr[floorStyle]}.png")" width="96" height="96" class="empty-tile"/>
                                         </li>
 
 
 
                                     }
-                                    <h6 class="drop-message">Drop here.</h6>
+
                                 }
                                 else
                                 {
@@ -225,10 +254,9 @@
 			@if (EnableBackpack)
 			{
 			    <tr>
-                    <td>
-                        <img src="@($"kenney/compass.png")" width="96" height="96"/>
-                    </td>
-                    <td>
+
+                    <td colspan="6" style="text-align: center;" class="backpack-cell">
+
                         @{
                             FloorCoord backpackNumber = FloorCoord.Backpack;
                             var backpackEmpty = BackpackContents == null;
@@ -237,27 +265,25 @@
                             @ondrop="@(() => HandleDrop(backpackNumber))"
                             @ondragenter="@(() => HandleDragEnter(backpackNumber))"
                             @ondragleave="@(() => HandleDragLeave(backpackNumber))">
-						
+
                             @if (!backpackEmpty)
                             {
                                 <li class="favorites-list-item draggable original-contents" draggable="true" @ondragstart="@(() => HandleDragStart(backpackNumber))">
-                                    <div class="room @BackpackContents.Value.Name">
-
+                                    <div class="room @BackpackContents.Value.Name" style="margin: auto;">
+                                        <img class="backpack-background2" src="@($"kenney/compass.png")" draggable="false" width="96" height="96" style="position: absolute; margin-left: -48px; mix-blend-mode: color-burn;"/>
+                                        <img class="backpack-background1" src="@($"kenney/compass.png")" draggable="false" width="96" height="96" style="position: absolute; margin-left: -48px; mix-blend-mode: color-burn;"/>
                                     </div>
                                 </li>
                             }
                             else
                             {
-                                <img src="@($"kenney/elementSquare.png")" width="96" height="96"/>
+                                <img class="backpack-background2" src="@($"kenney/compass.png")" draggable="false" width="96" height="96" style="position: absolute;"/>
+                                <img class="backpack-background1" src="@($"kenney/compass.png")" draggable="false" width="96" height="96" style="position: absolute;"/>
+                                <img class="backpack" src="@($"kenney/elementSquare.png")" draggable="false" width="96" height="96"/>
                             }
                         </ul>
                     </td>
-                    @for (int x = 0; x < Floor.Width - 2; x++)
-                    {
-                        <td>
 
-                        </td>
-                    }
                 </tr>
             
 			}
