@@ -15,62 +15,93 @@
         display: block;
         margin-bottom: 10px;
         text-align: left;
+        padding-left: 100px;
     }
 	button h6 {
         font-style: italic;
     }
+	button .badge {
+        width: 200px;
+    }
+	button.btn {
+        text-align: left;
+        padding-left: 60px;
+    }
+	.number {
+        position: absolute;
+        font-size: 60px;
+        overflow: hidden;
+        height: 100%;
+        margin-top: -8px;
+        font-family: times;
+        text-align: center;
+        left: 10px;
+        width: 100px;
+        color: white;
+    }
 </style>
 
-<button @onclick="@(()=>Navigate(1))" class="btn-primary btn-lg">
-    <h5>Level One</h5>
+<button @onclick="@(() => Navigate(1))" class="btn btn-light btn-lg">
+    <h1 class="number">1</h1>
+    <h5>Chapter One</h5>
     <h6>A bridge, not too far</h6>
 </button>
-<button @onclick="@(() => Navigate(2))" class="btn-primary  btn-lg">
-    <h5>Level Two</h5>
+<button @onclick="@(() => Navigate(2))" class="btn btn-light  btn-lg">
+    <h1 class="number">2</h1>
+    <h5>Chapter Two</h5>
     <h6>
         I know a shortcut.
     </h6>
 </button>
 
-<button @onclick="@(() => Navigate(3))" class="btn-primary  btn-lg">
-    <h5>Level Three</h5>
+<button @onclick="@(() => Navigate(3))" class="btn btn-light  btn-lg">
+    <h1 class="number">3</h1>
+    <h5>Chapter Three</h5>
     <h6>
         With apologies to one's sanity
     </h6>
 </button>
 
-<button @onclick="@(() => Navigate(4))" class="btn-primary  btn-lg">
-    <h5>Level Four</h5>
+<button @onclick="@(() => Navigate(4))" class="btn btn-light  btn-lg">
+    <h1 class="number">4</h1>
+    <h5>Chapter Four</h5>
+    <span class="badge badge-warning" style="float: right;">A moderate challenge</span>
     <h6>
         Ohana means nobody gets left behind
     </h6>
 </button>
 
-<button @onclick="@(() => Navigate("interlude"))" class="btn-secondary  btn-lg">
+<button @onclick="@(() => Navigate("interlude"))" class="btn btn-light  btn-lg">
     <h5>Interlude</h5>
 </button>
 
-<button @onclick="@(() => Navigate(5))" class="btn-primary  btn-lg">
-    <h5>Level Five</h5>
+<button @onclick="@(() => Navigate(5))" class="btn btn-light btn-lg">
+    <h1 class="number">5</h1>
+    <h5>Chapter Five</h5>
+    <span class="badge badge-warning" style="float: right;">A moderate challenge</span>
     <h6>
         A bridge, slightly too far
     </h6>
 </button>
 
-<button @onclick="@(()=>Navigate(6))" class="btn-primary  btn-lg">
-    <h5>Level Six</h5>
+<button @onclick="@(() => Navigate(6))" class="btn btn-light btn-lg">
+    <h1 class="number">6</h1>
+    <h5>Chapter Six</h5>
+    <span class="badge badge-danger" style="float: right;">A substantial challenge</span>
     <h6>
         A bridge, unquestionably too far
-    </h6>	
+    </h6>
 </button>
 
-<button @onclick="@(()=>Navigate(7))" class="btn-primary  btn-lg">
-    <h5>Level Seven</h5>
+<button @onclick="@(() => Navigate(7))" class="btn btn-light  btn-lg">
+    <h1 class="number">7</h1>
+    <h5>Chapter Seven</h5>
+    <span class="badge badge-danger" style="float: right;">Technically, it's possible</span>
     <h6>
         The Great Escape
-    </h6>	
+    </h6>
 </button>
-<button @onclick="@(()=>Navigate("ThankYou"))" class="btn-secondary btn-lg">Thank You & Attributions</button>
+<button @onclick="@(()=>Navigate("ThankYou"))" class="btn btn-light btn-lg">Thank You & Attributions</button>
 
 
 
