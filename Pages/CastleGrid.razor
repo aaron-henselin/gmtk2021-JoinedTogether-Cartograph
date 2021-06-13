@@ -4,7 +4,7 @@
 
     
 
-    td {
+    .floor td {
 
         width: 96px;
         border-spacing: 0px;
@@ -16,8 +16,34 @@
     .floor ul {
         list-style: none;
         min-width: 96px;
+        position: relative;
+    }
+
+	.floor ul .badge {
+        z-index: 99999999;
+        position: absolute;
+        margin-left: -40px;
+        padding: 5px;
+        width: 78px;
+    }
+
+	.floor ul .badge.up {
+        top: -15px;
+        animation: badge-anim 1s linear  infinite;
+    }
+    .floor ul .badge.down {
+        bottom: -5px;
+        animation: badge-anim 1s linear infinite;
+    }
+
+    @@keyframes badge-anim {
+        0% { transform: scale(0.9); opacity: 0.7; }
+        50% { transform: scale(1); opacity: 1; }
+        100% { transform: scale(0.9); opacity: 0.7; }
 
     }
+
+
 	.floor:focus-visible {
         outline: none;
     }
@@ -87,6 +113,12 @@
         animation: pulse 8s infinite ease-in-out;
     }
 
+    @@keyframes pulse {
+        0% { transform: scale(0.9); opacity: 0.05; }
+        50% { transform: scale(1); opacity: .1; }
+        100% { transform: scale(0.9); opacity: 0.05; }
+    }
+
 	.backpack-background1 {
         opacity: .2;
 		animation: spin1 16s infinite;
@@ -132,11 +164,7 @@
         100% { transform: rotate(1deg); }
     }
 
-    @@keyframes pulse {
-        0% { transform: scale(0.9); opacity: 0.05; }
-        50% { transform: scale(1); opacity: .1; }
-        100% { transform: scale(0.9); opacity: 0.05; }
-    }
+
 </style>
 
 
@@ -177,17 +205,26 @@
                                 {
                                     @if (!slotIsEmpty)
                                     {
-
-                                        
+  
 										@if (objectsAtPosition.Any())
 										{
 											if (objectsAtPosition.Any(x => x.IsPlayer))
 										    {
-										        <DIV class="player"/>
+										        if (room.RoomType.HasLadderAsc)
+										        {
+										            <span class="badge badge-warning up">▲&nbsp;&nbsp;&nbsp;UP&nbsp;&nbsp;&nbsp;▲</span>
+										        }
+										        if (room.RoomType.HasLadderDesc)
+										        {
+										            <span class="badge badge-warning down">▼&nbsp;DOWN&nbsp;▼</span>
+										        }
+										
+
+										        <div class="player"/>
 										    }
 										    if (objectsAtPosition.Any(x => x.IsExit))
 										    {
-										        <DIV class="exit"/>
+										        <div class="exit"/>
 										    } 
 										    <div class="immovable room @room.RoomType.Name">
 
