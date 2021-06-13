@@ -52,15 +52,39 @@
         display: none;
     }
 
-    .player {
-        width: 64px;
-        height: 85.3px;
-        background: url(kenney/character_maleAdventurer_sheetHD.png) 0 0;
+    .player,.player-token {
+        width: 48px;
+        height: 48px;
+        background: url(player/idle.png) 0 0;
         position: absolute;
-        transform: scale(0.7);
-        margin-left: 15px;
+        transform: scale(2);
+        left: 20px;
+        top: 20px;
     }
 
+
+
+    .player.idle,.player-token.idle {
+        background: url(player/idle.png) 0 0;
+        animation: idle 1s steps(8);
+    }
+
+    .player-token.walk {
+        background: url(player/walk.png) 0 0;
+        animation: walk 1s steps(6) infinite;
+    }
+
+
+
+    @@keyframes walk {
+        from { background-position: 0px;}
+        to{ background-position: -288px;}
+    }
+
+	@@keyframes idle {
+        from { background-position: 0px;}
+		to{ background-position: -384px;}
+    }
 
 
     .room {
@@ -148,7 +172,7 @@
         filter: grayscale(100%);
     }
 
-	.player,.exit {
+	.player,.player-token,.exit {
         z-index: 999999999;
     }
 
@@ -166,7 +190,6 @@
 
 
 </style>
-
 
 
 <div class="floor" @ref="floorRef" tabindex="0" @onkeydown="HandleKeyDown">
@@ -193,13 +216,23 @@
                         var isEditingThisItem = EditingIndex.HasValue && floorCoord.Equals(EditingIndex.Value);
 
                         var objectsAtPosition = Floor.GameObjects.Where(x => x.Position.Equals(floorCoord));
-
+                       
+                        var playersAtPosition = objectsAtPosition.Where(x => x.IsPlayer).ToList();
                         <td>
 							
                             <ul @key="@number" class="dropzone @(GetDragStateCss(number)) @(isEditingThisItem ? "bg-dark" : "") no-padding" ondragover="event.preventDefault();"
                                 @ondrop="@(()=>HandleDrop(number))"
                                 @ondragenter="@(()=>HandleDragEnter(number))"
                                 @ondragleave="@(()=>HandleDragLeave(number))">
+								
+								@{
+								    var ghostsAtPosition = Floor.Ghosts.Where(x => x.Value.Equals(floorCoord));
+								    foreach (var ghostAtPosition in ghostsAtPosition)
+								    {
+								        <div class="player-token walk" data-state="waiting" data-ghost-of-player-id="@ghostAtPosition.Key.Id" />
+								    }
+								}
+   
 
                                 @if (!isEditingAnyItem)
                                 {
@@ -208,7 +241,9 @@
   
 										@if (objectsAtPosition.Any())
 										{
-											if (objectsAtPosition.Any(x => x.IsPlayer))
+
+
+											if (playersAtPosition.Any())
 										    {
 										        if (room.RoomType.HasLadderAsc)
 										        {
@@ -218,9 +253,19 @@
 										        {
 										            <span class="badge badge-warning down">▼&nbsp;DOWN&nbsp;▼</span>
 										        }
-										
 
-										        <div class="player"/>
+										        foreach (var player in playersAtPosition)
+										        {
+										            var hasGhost = Floor.Ghosts.ContainsKey(player);
+										            if (hasGhost)
+										            {
+										                <div class="player" data-player-id="@player.Id" style="visibility: hidden;" />
+										            }
+										            else
+										            {
+										                <div class="player idle" />
+										            }
+										        }
 										    }
 										    if (objectsAtPosition.Any(x => x.IsExit))
 										    {
@@ -378,6 +423,8 @@
     public FloorCoord? Payload { get; set; }
     Dictionary<FloorCoord, bool> _dragStates = new Dictionary<FloorCoord, bool>();
 
+    
+
     public void ClearBackpack()
     {
         BackpackContents = null;
@@ -501,6 +548,11 @@
             await floorRef.FocusAsync();
             await JSRuntime.InvokeAsync<string>("showGame");
         }
+
+		Console.WriteLine("relocatePlayerTokens");
+        await JSRuntime.InvokeAsync<string>("relocatePlayerTokens");
+
+        
     }
 
     private async Task HandleKeyDown(KeyboardEventArgs e)
@@ -527,6 +579,8 @@
 
         List<FloorCoord> ascends = new List<FloorCoord>();
         List<FloorCoord> descends = new List<FloorCoord>();
+
+        Floor.Ghosts = new Dictionary<GameObject, FloorCoord>();
 
         var players = Floor.GameObjects.Where(x => x.IsPlayer);
         foreach (var gameObject in players)
@@ -567,6 +621,10 @@
 
 
                     currentRoom.Locked = true;
+
+                    Floor.Ghosts[gameObject] = gameObject.Position;
+    
+
                     gameObject.Position = newPosition;
 
 
@@ -603,6 +661,8 @@
         var ascdescWinCondition = WinCondition();
         if (ascdescWinCondition)
             await WinConditionReached.InvokeAsync();
+
+        
 
         this.StateHasChanged();
     }

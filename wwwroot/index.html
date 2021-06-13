@@ -86,6 +86,8 @@
         $(bandcamp_frame).show().append(node);
     }
 
+
+
 </script>
 
     <div id="blazor-error-ui">
@@ -129,6 +131,38 @@
                 $('#game').stop();
                 $('#game').fadeIn(100);
             });
+        }
+
+        window.checkIdle = function() {
+
+        }
+
+        window.relocatePlayerTokens = function() {
+
+            
+            $('[data-state=\'waiting\']').each(function() {
+                var $token = $(this);
+                $token.removeAttr("data-state");
+                var playerId = $token.data("ghost-of-player-id");
+
+                var pos1 = $(".player[data-player-id='" + playerId + "']").offset();
+                var pos2 = $token.offset();
+
+                var moveTop = pos1.top - pos2.top;
+                var moveLeft = pos1.left - pos2.left;
+
+                console.log(moveTop + "," + moveLeft);
+                $token.addClass("walk");
+                $token.animate({
+                    'margin-left': moveLeft,
+                    'margin-top': moveTop
+                }, 200,function() {
+                    $token.removeClass("walk");
+                });
+
+
+            });
+          
         }
 
     </script>

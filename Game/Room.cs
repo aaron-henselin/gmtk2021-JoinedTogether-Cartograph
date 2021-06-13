@@ -74,12 +74,16 @@ namespace JoinedTogetherGmtk2021.Game
         public int Width => _width;
         public int Height => _height;
 
+
+        public Dictionary<GameObject, FloorCoord> Ghosts { get; set; } = new Dictionary<GameObject, FloorCoord>();
+
         public List<GameObject> GameObjects { get; set; } = new List<GameObject>();
   
     }
 
     public class GameObject
     {
+        public string Id { get; set; } = Guid.NewGuid().ToString().Replace("-", "");
         public FloorCoord Position { get; set; }
         public bool IsPlayer { get; set; }
         public bool IsExit { get; set; }
